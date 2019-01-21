@@ -12,3 +12,4 @@ export const ROOT_PATH = "/sealog/";
 
 // Where the images are hosted on the webserver.
 export const IMAGE_PATH = "/files/images";
+export const RECAPTCHA_SITE_KEY = ""

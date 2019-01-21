@@ -5,6 +5,7 @@ import { reduxForm, Field } from 'redux-form';
 import { Link } from 'react-router-dom';
 import { Grid, Row, Col, FormGroup, Panel, Button, Alert } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
+import { RECAPTCHA_SITE_KEY } from '../../url_config';
 import * as actions from '../../actions';
 
 class Register extends Component {
@@ -138,7 +139,7 @@ class Register extends Component {
               </FormGroup>
               <ReCAPTCHA
                 ref={e => recaptchaInstance = e}
-                sitekey="6LdwEXQUAAAAAJ2tI2x9Xypfpuym7tkRG4cQeoH0"
+                sitekey={RECAPTCHA_SITE_KEY}
                 theme="dark"
                 size="normal"
                 onChange={this.onCaptchaChange.bind(this)}

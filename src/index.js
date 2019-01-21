@@ -58,9 +58,7 @@ const cookies = new Cookies();
 
 const token = cookies.get('token');
 if (token) {
-
   store.dispatch({ type: AUTH_USER });
-
 }
 
 ReactDOM.render(
