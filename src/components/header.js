@@ -116,12 +116,12 @@ class Header extends Component {
           {this.renderLoweringOptions()}
           {this.renderTaskOptions()}
           {this.renderUserOptions()}
-          {this.renderToggleASNAP()}
         </NavDropdown>
       );
     }
   }
           // {this.renderEventTemplateOptions()}
+          // {this.renderToggleASNAP()}
 
   renderUserDropdown() {
     if(this.props.authenticated){
@@ -185,7 +185,7 @@ function mapStateToProps(state){
     authenticated: state.auth.authenticated,
     fullname: state.user.profile.fullname,
     roles: state.user.profile.roles,
-    asnapStatus: (state.custom_var)? state.custom_var.custom_vars.find(custom_var => custom_var.custom_var_name == "asnapStatus") : null
+    // asnapStatus: (state.custom_var)? state.custom_var.custom_vars.find(custom_var => custom_var.custom_var_name == "asnapStatus") : null
   };
 }
 
