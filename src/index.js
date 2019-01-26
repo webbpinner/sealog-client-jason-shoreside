@@ -67,7 +67,7 @@ ReactDOM.render(
       <ConnectedRouter history={history}>
           <div>
             <Header />
-            <Route path={ `/` } exact={true} component={RequireAuth(EventLogging)}/>
+            <Route path={ `/` } exact={true} component={RequireAuth(CruiseMenu)}/>
             <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/webbpinner/sealog-client-jason-shoreside'}/>
             <Route path={ `/license`} exact={true} component={() => window.location = 'http://www.gnu.org/licenses/gpl-3.0.html'}/>
             <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
