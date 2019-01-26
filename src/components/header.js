@@ -113,7 +113,6 @@ class Header extends Component {
         <NavDropdown eventKey={3} title={'System Management'} id="basic-nav-dropdown">
           {this.renderCruiseOptions()}
           {this.renderEventManagementOptions()}
-          {this.renderEventTemplateOptions()}
           {this.renderLoweringOptions()}
           {this.renderTaskOptions()}
           {this.renderUserOptions()}
@@ -122,6 +121,7 @@ class Header extends Component {
       );
     }
   }
+          // {this.renderEventTemplateOptions()}
 
   renderUserDropdown() {
     if(this.props.authenticated){
