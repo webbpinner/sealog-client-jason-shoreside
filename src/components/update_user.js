@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { reduxForm, Field, initialize } from 'redux-form';
+import { reduxForm, Field } from 'redux-form';
 import { Alert, Button, Checkbox, Col, FormGroup, FormControl, FormGroupItem, Panel, Row, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import * as actions from '../actions';
 import { standardUserRoleOptions } from '../standard_user_role_options';

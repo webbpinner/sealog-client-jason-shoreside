@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Button, Row, Col, Panel, PanelGroup, ListGroup, ListGroupItem } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
-import { API_ROOT_URL } from '../url_config';
+import { API_ROOT_URL } from '../client_config';
 
 import * as actions from '../actions';
 
@@ -157,13 +157,18 @@ class CruiseMenu extends Component {
             <p><strong>Description:</strong> {cruise.cruise_description}</p>
             <p><strong>Dates:</strong> {moment.utc(cruise.start_ts).format("YYYY/MM/DD")} - {moment.utc(cruise.stop_ts).format("YYYY/MM/DD")}</p>
             {cruise_files}
-            <p><strong>Lowerings:</strong></p>
-            <ul>
-              { cruiseLowerings.map(lowering => (
-                  <li key={`select_${lowering.id}`} ><Link to="#" onClick={ () => this.handleLoweringSelect(lowering.id) }>{lowering.lowering_id}</Link><br/></li>
-                ))
-              }
-            </ul>
+            { (cruiseLowerings.length > 0)? (
+              <div>
+                <p><strong>Lowerings:</strong></p>
+                <ul>
+                  { cruiseLowerings.map(lowering => (
+                      <li key={`select_${lowering.id}`} ><Link to="#" onClick={ () => this.handleLoweringSelect(lowering.id) }>{lowering.lowering_id}</Link><br/></li>
+                    ))
+                  }
+                </ul>
+              </div>
+            ): null
+            }
           </Panel.Body>
         </Panel>
       );
@@ -199,7 +204,7 @@ class CruiseMenu extends Component {
         <Row>
           <Col xs={12}>
             <h4>Welcome to Sealog</h4>
-            Sealog provides the NDSF user community with at-sea access to in-situ observations, still imagery, position/attitude data, and sensor data from the Alvin HOV for review and analysis<br/><br/>
+            Sealog provides the NDSF user community with shore-based access to in-situ observations, still imagery, position/attitude data, and sensor data from the JASON ROV for review and analysis<br/><br/>
           </Col>
         </Row>
         <Row>

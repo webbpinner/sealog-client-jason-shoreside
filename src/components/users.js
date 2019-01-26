@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { reduxForm, Field, reset } from 'redux-form';
-import { Row, Button, Col, Panel, Alert, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-import { ROOT_PATH } from '../url_config';
+import { Row, Button, Col, Panel, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import CreateUser from './create_user';
 import UpdateUser from './update_user';
 import DisplayUserTokenModal from './display_user_token_modal';
@@ -34,7 +31,7 @@ class Users extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchUsers();
   }
 

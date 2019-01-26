@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { AUTH_USER } from './actions/types';
 import Header from './components/header';
@@ -24,6 +24,7 @@ import LoweringReplay from './components/lowering_replay';
 import LoweringReview from './components/lowering_review';
 import Cruises from './components/cruises';
 import ForgotPassword from './components/auth/forgot_password';
+import ResetPassword from './components/auth/reset_password';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -72,6 +73,7 @@ ReactDOM.render(
             <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
             <Route path={ `/register` } exact={true} component={Register} />
             <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
+            <Route path={ `/resetPassword/:token` } exact={true} component={ResetPassword} />
             <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
             <Route path={ `/logout` } exact={true} component={Logout} />
             <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />

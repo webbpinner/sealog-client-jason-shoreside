@@ -5,7 +5,7 @@ import { reduxForm, Field } from 'redux-form';
 import { Link } from 'react-router-dom';
 import { Grid, Row, Col, FormGroup, Panel, Button, Alert } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
-import { RECAPTCHA_SITE_KEY } from '../../url_config';
+import { RECAPTCHA_SITE_KEY } from '../../client_config';
 import * as actions from '../../actions';
 
 class Register extends Component {
@@ -81,7 +81,6 @@ class Register extends Component {
   renderForm() {
 
     if (!this.props.message) {
-
 
       const panelHeader = (<h4 className="form-signin-heading">New User Registration</h4>);
       const { handleSubmit, pristine, reset, submitting, valid } = this.props;
@@ -159,8 +158,6 @@ class Register extends Component {
   }
 
   render() {
-
-    const panelHeader = (<h3>New User Registration</h3>);
 
     return(
       <Grid>

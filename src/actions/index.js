@@ -6,12 +6,13 @@ import { push } from 'connected-react-router';
 import { bindActionCreators } from 'redux';
 import { show, destroy } from 'redux-modal';
 import {change, untouch} from 'redux-form';
-import { API_ROOT_URL} from '../url_config';
+import { API_ROOT_URL} from '../client_config';
 
 import {
   AUTH_USER,
   UNAUTH_USER,
   AUTH_ERROR,
+  AUTH_SUCCESS,
   CREATE_USER_SUCCESS,
   CREATE_USER_ERROR,
   LEAVE_CREATE_USER_FORM,
@@ -197,9 +198,9 @@ export function login({username, password, reCaptcha}) {
 
     })
     .catch((error)=>{
-      // console.log(error);
+      console.log(error.response.data.message);
       // If request is unauthenticated
-      dispatch(authError('Bad login info'));
+      dispatch(authError(error.response.data.message));
 
     });
   }
@@ -359,6 +360,25 @@ export function deleteEvent(event_id) {
   }
 }
 
+export function forgotPassword({email, reCaptcha}) {
+
+  return function (dispatch) {
+    axios.post(`${API_ROOT_URL}/api/v1/forgotPassword`, {email, reCaptcha})
+    .then(response => {
+
+      console.log(response.data.message)
+      dispatch(authSuccess(response.data.message));
+
+    })
+    .catch((error)=>{
+      console.log(error)
+      // If request is invalid
+      dispatch(authError(error.response.data.message));
+
+    });
+  }
+}
+
 export function resetPassword({ token, password, reCaptcha}) {
   return function (dispatch) {
     axios.patch(`${API_ROOT_URL}/api/v1/resetPassword`, { token, password, reCaptcha})
@@ -427,10 +447,10 @@ export function createUser({username, fullname, password = '', email, roles, sys
   }
 }
 
-export function createCruise({cruise_id, cruise_name, start_ts, stop_ts, cruise_description = '', cruise_location = '', cruise_pi, cruise_participants = [], cruise_tags = [], cruise_hidden = false}) {
+export function createCruise({cruise_id, cruise_name, start_ts, stop_ts, cruise_description = '', cruise_location = '', cruise_pi, cruise_participants = [], cruise_tags = [], cruise_hidden = false, cruise_access_list = []}) {
   return function (dispatch) {
     axios.post(`${API_ROOT_URL}/api/v1/cruises`,
-    {cruise_id, cruise_name, start_ts, stop_ts, cruise_description, cruise_location, cruise_pi, cruise_participants, cruise_tags, cruise_hidden},
+    {cruise_id, cruise_name, start_ts, stop_ts, cruise_description, cruise_location, cruise_pi, cruise_participants, cruise_tags, cruise_hidden, cruise_access_list},
     {
       headers: {
         authorization: cookies.get('token'),
@@ -449,10 +469,10 @@ export function createCruise({cruise_id, cruise_name, start_ts, stop_ts, cruise_
   }
 }
 
-export function createLowering({lowering_id, lowering_name, start_ts, stop_ts, lowering_description = '', lowering_location = '', lowering_tags = [], lowering_hidden = false}) {
+export function createLowering({lowering_id, lowering_name, start_ts, stop_ts, lowering_description = '', lowering_location = '', lowering_tags = [], lowering_hidden = false, lowering_access_list = []}) {
   return function (dispatch) {
     axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
-    {lowering_id, lowering_name, start_ts, stop_ts, lowering_description, lowering_location, lowering_tags, lowering_hidden},
+    {lowering_id, lowering_name, start_ts, stop_ts, lowering_description, lowering_location, lowering_tags, lowering_hidden, lowering_access_list},
     {
       headers: {
         authorization: cookies.get('token'),
@@ -655,6 +675,10 @@ export function updateCruise(formProps) {
     fields.cruise_files = formProps.cruise_files;
   }
 
+  if(formProps.cruise_access_list) {
+    fields.cruise_access_list = formProps.cruise_access_list;
+  }
+
   return async function (dispatch) {
     await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${formProps.id}`,
       fields,
@@ -729,6 +753,10 @@ export function updateLowering(formProps) {
 
   if(formProps.lowering_files) {
     fields.lowering_files = formProps.lowering_files;
+  }
+
+  if(formProps.lowering_access_list) {
+    fields.lowering_access_list = formProps.lowering_access_list;
   }
 
   return function (dispatch) {
@@ -963,6 +991,13 @@ export function logout() {
 export function switch2Guest() {
   return function(dispatch) {
     dispatch(login( { username:"guest", password: "" } ) );
+  }
+}
+
+export function authSuccess(message) {
+  return {
+    type: AUTH_SUCCESS,
+    payload: message
   }
 }
 

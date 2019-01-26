@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, reset } from 'redux-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import * as actions from '../../actions';
 import { ROOT_PATH, RECAPTCHA_SITE_KEY } from '../../client_config';
 
-class ForgotPassword extends Component {
+class ResetPassword extends Component {
  
  constructor (props) {
     super(props);
@@ -16,15 +16,18 @@ class ForgotPassword extends Component {
     this.state = { 
       reCaptcha: null
     }
+
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ email }) {
+  handleFormSubmit({ password }) {
     let reCaptcha = this.state.reCaptcha
-    this.props.forgotPassword({email, reCaptcha});
+    let token = this.props.match.params.token
+    this.props.resetPassword({token, password, reCaptcha});
   }
 
   onCaptchaChange(token) {
@@ -34,7 +37,7 @@ class ForgotPassword extends Component {
   renderSuccess() {
 
     if (this.props.successMessage) {
-      const panelHeader = (<h4 className="form-signin-heading">Forgot Password</h4>);
+      const panelHeader = (<h4 className="form-signin-heading">Reset Password</h4>);
 
       return (
         <Panel className="form-signin" >
@@ -52,7 +55,7 @@ class ForgotPassword extends Component {
     }
   }
 
-  renderAlert(){
+  renderAlert() {
 
     if(this.props.errorMessage) {
       return (
@@ -69,41 +72,63 @@ class ForgotPassword extends Component {
     }
   }
 
+  renderField({ input, label, type, required, meta: { touched, error, warning } }) {
+
+    return (
+      <FormGroup>
+        <div>
+          <input className="form-control" {...input} placeholder={label} type={type}/>
+          {touched && ((error && <div className='text-danger'>{error}</div>) || (warning && <div className='text-danger'>{warning}</div>))}
+        </div>
+      </FormGroup>
+    )
+  }
+ 
   renderForm() {
 
     if(!this.props.successMessage) {
 
-      const panelHeader = (<h4 className="form-signin-heading">Forgot Password</h4>);
+      const loginPanelHeader = (<h4 className="form-signin-heading">Reset Password</h4>);
       const { handleSubmit, pristine, reset, submitting, valid } = this.props;
 
       return (
         <Panel className="form-signin" >
           <Panel.Body>
-            {panelHeader}
+            {loginPanelHeader}
             <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <FormGroup>
                 <Field
-                  name="email"
-                  component="input"
-                  type="text"
-                  placeholder="Email Address"
-                  className="form-control"
+                  name="password"
+                  component={this.renderField}
+                  type="password"
+                  label="Password"
                 />
               </FormGroup>
+              <FormGroup>
+                <Field
+                  name="confirmPassword"
+                  component={this.renderField}
+                  type="password"
+                  label="Confirm Password"
+                />
+              </FormGroup>
+              <br/>
               <ReCAPTCHA
                 ref={e => recaptchaInstance = e}
-                sitekey={RECAPTCHA_SITE_KEY}
+                sitekey={ RECAPTCHA_SITE_KEY }
                 theme="dark"
                 size="normal"
                 onChange={this.onCaptchaChange.bind(this)}
               />
               <br/>
               {this.renderAlert()}
-              <Button bsStyle="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button>
+              <div>
+                <Button bsStyle="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button>
+              </div>
             </form>
             <br/>
             <div className="text-right">
-              <Link to={ `/login` }>Back to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
+              <Link to={ `/login` }>Proceed to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
             </div>
           </Panel.Body>
         </Panel>
@@ -122,14 +147,23 @@ class ForgotPassword extends Component {
       </Row>
     )
   }
+
 }
 
 const validate = values => {
 
-  // console.log(values)
   const errors = {}
-  if (!values.email) {
-    errors.email = 'Required'
+
+  if (!values.password) {
+    errors.password = "Required";
+  } else if (values.password.length < 8) {
+    errors.password = 'Password must be 8 characters or more'
+  } else if (values.password.match(/[ ]/)) {
+    errors.password = 'Password can not include whitespace'
+  }
+
+  if(values.password !== values.confirmPassword) {
+    errors.confirmPassword = "Passwords must match";
   }
 
   return errors
@@ -146,12 +180,13 @@ let recaptchaInstance = null;
 
 const afterSubmit = (result, dispatch) => {
   recaptchaInstance.reset();
+  dispatch(reset('resetPassword'));
 }
 
-ForgotPassword = reduxForm({
-  form: 'forgotPassword',
+ResetPassword = reduxForm({
+  form: 'resetPassword',
   validate: validate,
   onSubmitSuccess: afterSubmit
-})(ForgotPassword);
+})(ResetPassword);
 
-export default connect(mapStateToProps, actions)(ForgotPassword);
+export default connect(mapStateToProps, actions)(ResetPassword);

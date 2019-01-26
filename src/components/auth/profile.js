@@ -4,7 +4,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { reduxForm, Field, initialize } from 'redux-form';
 import { Alert, Button, Col, FormGroup, FormControl, Grid, Panel, Row } from 'react-bootstrap';
-import { API_ROOT_URL } from '../../url_config';
+import { API_ROOT_URL } from '../../client_config';
 import * as actions from '../../actions';
 
 const style = {wordWrap:'break-word'}

@@ -7,7 +7,7 @@ import * as actions from '../actions';
 // import $ from 'jquery';
 import { Client } from 'nes/client';
 import Cookies from 'universal-cookie';
-import { WS_ROOT_URL } from '../url_config';
+import { WS_ROOT_URL } from '../client_config';
 
 const cookies = new Cookies();
 

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { reduxForm, Field, reset } from 'redux-form';
 import { FormGroup, Grid, Row, Button, Col, Panel, Alert, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { ROOT_PATH } from '../url_config';
+import { ROOT_PATH } from '../client_config';
 import CreateEventTemplate from './create_event_template';
 import UpdateEventTemplate from './update_event_template';
 import NonSystemEventTemplatesWipeModal from './non_system_event_templates_wipe_modal';

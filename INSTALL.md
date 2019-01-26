@@ -33,12 +33,12 @@ This should clone the repo to a directory called `sealog-client-jason-shoreside`
 
 ```
 cd ~/sealog-client-jason-shoreside
-cp ./src/url_config.js.dist ./src/url_config.js
+cp ./src/client_config.js.dist ./src/client_config.js
 ```
 
 ### Modify the configuration file
 
-Set the `API_ROOT_URL`, `WS_ROOT_URL`, `ROOT_PATH` and `IMAGES_PATH` values in the `./sealog-client/src/url_config.js` file to meet your specific installation requirements.
+Set the `API_ROOT_URL`, `WS_ROOT_URL`, `ROOT_PATH`, `IMAGES_PATH` and `RECAPTCHA_SITE_KEY` values in the `./sealog-client/src/client_config.js` file to meet your specific installation requirements.
 
 By default the file assumes the sealog-server is available on ports 8000/8001 on the same server that is hosting the sealog-server.  The default configuration file also assumes the client will be available from the root of the webserver.  If you want the webclient available at: `http://<serverIP>/sealog` you need to set `ROOT_PATH` to `/sealog/` (notice there is a starting `/` **AND** trailing `/`).
 
