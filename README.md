@@ -1,17 +1,17 @@
-# sealog-client-jason
-React-Redux based front-end to the Sealog event logging server customized to support the JASON ROV
+# sealog-client-jason-shoreside
+React-Redux based front-end to the Sealog event reviewing server customized to support the JASON ROV
 
 For installation instruction please look at [INSTALL.md](./INSTALL.md)
 
-[Live Demo](https://sealog-jason.oceandatarat.org)
+[Live Demo](https://sealog-jason-shoreside.oceandatarat.org)
 
 - admin account for demo: admin:password
 - guest account for demo: guest:<no password>
 
-**sealog-client-jason** is based off [sealog-client](https://github.com/webbpinner/sealog-client)
+**sealog-client-jason** is based off [sealog-client](https://github.com/webbpinner/sealog-client-shoreside)
 
 # Current Users
-Sealog-jason is currently in-use with the JASON ROV operated by the Woods Hole Oceanographic Institution.
+Sealog-jason-shoreside is currently in-use with the JASON ROV operated by the Woods Hole Oceanographic Institution.
 
 # Thanks and acknowledgments
 Sealog is in ongoing development thanks to the generosity of the Schmidt Ocean Institute (SOI) who have supported the project since 2018. Thank also to the Woods Hole Oceanographic Institution who provided the initial inspiration for the project and are it's first user.

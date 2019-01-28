@@ -52,11 +52,12 @@ library.add(faArrowLeft,faArrowRight,faBackward,faComment,faCompress,faDownload,
 
 require('typeface-roboto');
 
-import store from './store';
+import configureStore from './store';
 import history from './history';
 
-const cookies = new Cookies();
+const store = configureStore();
 
+const cookies = new Cookies();
 const token = cookies.get('token');
 if (token) {
   store.dispatch({ type: AUTH_USER });

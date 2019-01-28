@@ -81,7 +81,7 @@ Add the following to your Apache vhosts file:
 
 Create a symbolic link from the repository to the apache document root
 ```
-sudo ln -s /home/sealog/sealog-client-jason/dist /var/www/html/sealog
+sudo ln -s /home/sealog/sealog-client-jason-shoreside/dist /var/www/html/sealog
 ```
 
 You will need to tweak this configuration to match your exact installation.  This example assumes the client will live at `http://<serverIP>/sealog` and the git repo is located at: `/home/sealog/sealog-client-jason-shoreside`
