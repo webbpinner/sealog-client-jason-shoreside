@@ -46,7 +46,7 @@ By default the file assumes the sealog-server is available on ports 8000/8001 on
 
 ```
 cd ~/sealog-client-jason-shoreside
-cp ./webpack.js.dist ./webpack.js
+cp ./webpack.config.js.dist ./webpack.config.js
 ```
 
 If you are deploying the client to somewhere other than `http://<serverIP>/sealog` you need to set `ROOT_PATH` to the new location. (notice there is a starting `/` **AND** trailing `/`).
