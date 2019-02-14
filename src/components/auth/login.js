@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Grid, Row, Col, FormGroup, Panel, Button, Alert, Image } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as actions from '../../actions';
-import { ROOT_PATH, RECAPTCHA_SITE_KEY } from '../../client_config';
+import { ROOT_PATH, RECAPTCHA_SITE_KEY, LOGIN_IMAGE, LOGIN_SCREEN_TXT } from '../../client_config';
 
 class Login extends Component {
  
@@ -52,6 +52,7 @@ class Login extends Component {
 render() {
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
     const loginPanelHeader = (<h4 className="form-signin-heading">Please Sign In</h4>);
+    const loginImage = (LOGIN_IMAGE !== '')? <Image className="form-signin" responsive src={`${ROOT_PATH}images/${LOGIN_IMAGE}`}/> : null
 
     return (
       <Row>
@@ -104,7 +105,8 @@ render() {
           </Panel>
         </Col>
         <Col>
-          <Image className="form-signin" responsive src={`${ROOT_PATH}images/Jason_Profile.png`}/>
+          {loginImage}
+          <span>{LOGIN_SCREEN_TXT}</span>
         </Col>
       </Row>
     )

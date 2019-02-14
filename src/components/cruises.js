@@ -80,7 +80,7 @@ class Cruises extends Component {
   }
 
   exportCruisesToJSON() {
-    fileDownload(JSON.stringify(this.props.cruises, null, "\t"), 'seaplay_cruisesExport.json');
+    fileDownload(JSON.stringify(this.props.cruises, null, "\t"), 'sealog_cruisesExport.json');
   }
 
   renderAddCruiseButton() {
@@ -124,10 +124,14 @@ class Cruises extends Component {
 
         let accessCruiseLink = (this.props.roles.includes('admin'))? <Link key={`access_${cruise.id}`} to="#" onClick={ () => this.handleCruiseAccess(cruise.id) }><OverlayTrigger placement="top" overlay={userAccessTooltip}><FontAwesomeIcon icon='user' fixedWidth/></OverlayTrigger></Link>: null
 
+        let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span>Name: {cruise.cruise_additional_meta.cruise_name}<br/></span> : null
+        let cruiseLocation = (cruise.cruise_location)? <span>Location: {cruise.cruise_location}<br/></span> : null
+        let cruisePi = (cruise.cruise_pi)? <span>PI: {cruise.cruise_pi}<br/></span> : null
+
         return (
           <tr key={cruise.id}>
             <td>{cruise.cruise_id}</td>
-            <td>{cruise.cruise_name}<br/>PI: {cruise.cruise_pi}<br/>Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
+            <td>{cruiseName}{cruiseLocation}{cruisePi}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
             <td>
               <Link key={`edit_${cruise.id}`} to="#" onClick={ () => this.handleCruiseUpdate(cruise.id) }><OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon icon='pencil-alt' fixedWidth/></OverlayTrigger></Link>
               {deleteLink}
