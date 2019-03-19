@@ -63,9 +63,11 @@ class CruiseMenu extends Component {
     {
       headers: {
         authorization: cookies.get('token')
-      }
+      },
+      responseType: arraybuffer
     })
     .then((response) => {
+
         FileDownload(response.data, filename);
      })
     .catch((error)=>{
@@ -78,9 +80,11 @@ class CruiseMenu extends Component {
     {
       headers: {
         authorization: cookies.get('token')
-      }
+      },
+      responseType: arraybuffer
     })
     .then((response) => {
+
         FileDownload(response.data, filename);
      })
     .catch((error)=>{
