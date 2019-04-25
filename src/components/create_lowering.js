@@ -164,7 +164,7 @@ class CreateLowering extends Component {
                   component={this.renderTextArea}
                   type="textarea"
                   label="Lowering Description"
-                  placeholder="A brief description of the lowering"
+                  placeholder="i.e. A brief description of the lowering"
                   rows={10}
                 />
                 <Field
@@ -193,7 +193,7 @@ class CreateLowering extends Component {
                   component={this.renderTextArea}
                   type="textarea"
                   label="Lowering Tags, comma delimited"
-                  placeholder="A comma-delimited list of tags, i.e. coral,chemistry,engineering"
+                  placeholder="i.e. coral,chemistry,engineering"
                 />
                 {this.renderAlert()}
                 {this.renderMessage()}
@@ -225,10 +225,6 @@ function validate(formProps) {
     errors.lowering_id = 'Required'
   } else if (formProps.lowering_id.length > 15) {
     errors.lowering_id = 'Must be 15 characters or less'
-  }
-
-  if (!formProps.lowering_name) {
-    errors.lowering_name = 'Required'
   }
 
   if (!formProps.start_ts) {

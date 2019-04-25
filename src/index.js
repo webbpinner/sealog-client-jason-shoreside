@@ -20,6 +20,7 @@ import EventLogging from './components/event_logging';
 import EventManagement from './components/event_management';
 import EventTemplates from './components/event_templates';
 import Lowerings from './components/lowerings';
+import LoweringGallery from './components/lowering_gallery';
 import LoweringReplay from './components/lowering_replay';
 import LoweringReview from './components/lowering_review';
 import Cruises from './components/cruises';
@@ -82,6 +83,7 @@ ReactDOM.render(
             <Route path={ `/cruises` } exact={true} component={RequireAuth(Cruises)} />
             <Route path={ `/cruise_menu` } exact={true} component={RequireAuth(CruiseMenu)} />
             <Route path={ `/lowerings` } exact={true} component={RequireAuth(Lowerings)} />
+            <Route path={ `/lowering_gallery/:id` } exact={true} component={RequireAuth(LoweringGallery)} />
             <Route path={ `/lowering_replay/:id` } exact={true} component={RequireAuth(LoweringReplay)} />
             <Route path={ `/lowering_review/:id` } exact={true} component={RequireAuth(LoweringReview)} />
             <Route path={ `/event_management` } exact={true} component={RequireAuth(EventManagement)} />

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import queryString from 'querystring';
 import { push } from 'connected-react-router';
@@ -213,6 +212,14 @@ export function gotoHome() {
   }
 }
 
+export function gotoLoweringGallery(id) {
+
+  return function (dispatch) {
+    dispatch(initLowering(id))
+    dispatch(push(`/lowering_gallery/${id}`));
+  }
+}
+
 export function gotoLoweringReplay(id) {
 
   return function (dispatch) {
@@ -221,7 +228,7 @@ export function gotoLoweringReplay(id) {
   }
 }
 
-export function gotoLoweringSearch(id) {
+export function gotoLoweringReview(id) {
 
   return function (dispatch) {
     dispatch(initLowering(id))
@@ -312,6 +319,7 @@ export function updateEvent(eventValue, eventFreeText = '', eventOptions = [], e
 }
 
 export function updateLoweringReplayEvent(event_id) {
+
   const request = axios.get(API_ROOT_URL + '/api/v1/events/' + event_id, {
     headers: {
       authorization: cookies.get('token')
@@ -613,8 +621,21 @@ export function showCruise(id) {
 
   let fields = { id: id, cruise_hidden: false }
 
-  return function (dispatch) {
-    dispatch(updateCruise(fields));
+  return async function (dispatch) {
+    await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+      fields,
+      {
+        headers: {
+        authorization: cookies.get('token')
+        }
+      }      
+    ).then((response) => {
+      dispatch(fetchCruises());
+      dispatch(updateCruiseSuccess('Cruise updated'));
+    }).catch((error) => {
+      console.log(error)
+      dispatch(updateCruiseError(error.response.data.message));
+    });
   }
 }
 
@@ -622,8 +643,21 @@ export function hideCruise(id) {
 
   let fields = { id: id, cruise_hidden: true }
 
-  return function (dispatch) {
-    dispatch(updateCruise(fields));
+  return async function (dispatch) {
+    await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+      fields,
+      {
+        headers: {
+        authorization: cookies.get('token')
+        }
+      }      
+    ).then((response) => {
+      dispatch(fetchCruises());
+      dispatch(updateCruiseSuccess('Cruise updated'));
+    }).catch((error) => {
+      console.log(error)
+      dispatch(updateCruiseError(error.response.data.message));
+    });
   }
 }
 
@@ -637,6 +671,8 @@ export function updateCruise(formProps) {
 
   if(formProps.cruise_location) {
     fields.cruise_location = formProps.cruise_location;
+  } else {
+    fields.cruise_location = '';
   }
 
   if(formProps.cruise_pi) {
@@ -645,6 +681,8 @@ export function updateCruise(formProps) {
 
   if(formProps.cruise_tags) {
     fields.cruise_tags = formProps.cruise_tags;
+  } else {
+    fields.cruise_tags = [];
   }
 
   if(formProps.start_ts) {
@@ -685,21 +723,47 @@ export function updateCruise(formProps) {
   }
 }
 
-export function showLowering(id) {
-
-  let fields = { id: id, lowering_hidden: false }
-
-  return function (dispatch) {
-    dispatch(updateLowering(fields));
-  }
-}
-
 export function hideLowering(id) {
 
   let fields = { id: id, lowering_hidden: true }
 
-  return function (dispatch) {
-    dispatch(updateLowering(fields));
+  return async function (dispatch) {
+    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+      fields,
+      {
+        headers: {
+        authorization: cookies.get('token')
+        }
+      }      
+    ).then((response) => {
+      dispatch(fetchLowerings());
+      dispatch(updateLoweringSuccess('Lowering updated'));
+    }).catch((error) => {
+      console.log(error)
+      dispatch(updateLoweringError(error.response.data.message));
+    });
+  }
+}
+
+export function showLowering(id) {
+
+  let fields = { id: id, lowering_hidden: false }
+
+  return async function (dispatch) {
+    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+      fields,
+      {
+        headers: {
+        authorization: cookies.get('token')
+        }
+      }      
+    ).then((response) => {
+      dispatch(fetchLowerings());
+      dispatch(updateLoweringSuccess('Lowering updated'));
+    }).catch((error) => {
+      console.log(error)
+      dispatch(updateLoweringError(error.response.data.message));
+    });
   }
 }
 
@@ -713,10 +777,14 @@ export function updateLowering(formProps) {
 
   if(formProps.lowering_location) {
     fields.lowering_location = formProps.lowering_location;
+  } else {
+    fields.lowering_location = ''
   }
 
   if(formProps.lowering_tags) {
     fields.lowering_tags = formProps.lowering_tags;
+  } else {
+    fields.lowering_tags = []
   }
 
   if(formProps.start_ts) {
@@ -968,9 +1036,9 @@ export function logout() {
   }
 }
 
-export function switch2Guest() {
+export function switch2Guest(reCaptcha) {
   return function(dispatch) {
-    dispatch(login( { username:"guest", password: "" } ) );
+    dispatch(login( { username:"guest", password: "guest", reCaptcha: reCaptcha } ) );
   }
 }
 
@@ -1336,6 +1404,11 @@ export function clearSelectedEvent() {
   }
 }
 
+export function clearEvents() {
+  return function(dispatch) {
+    dispatch({type: UPDATE_EVENTS, payload: []})
+  }
+}
 
 export function fetchEventHistory(asnap = false) {
 
@@ -1363,7 +1436,6 @@ export function fetchEventHistory(asnap = false) {
     });
   }
 }
-
 
 export function fetchEventTemplates() {
 
@@ -1425,6 +1497,32 @@ export function initCruise(id) {
   }
 }
 
+export function initCruiseFromLowering(id) {
+  return function (dispatch) {
+    axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+    {
+      headers: {
+        authorization: cookies.get('token')
+      }
+    }).then((loweringResponse) => {
+      axios.get(`${API_ROOT_URL}/api/v1/cruises?startTS=${loweringResponse.data.start_ts}&stopTS=${loweringResponse.data.stop_ts}`,
+      {
+        headers: {
+          authorization: cookies.get('token')
+        }
+      }).then((response) => {
+        dispatch({ type: INIT_CRUISE, payload: response.data[0] })
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404) {
+          console.log(error);
+        }
+      })
+    }).catch((error)=>{
+      console.log(error);
+    })
+  }
+}
+
 export function initLowering(id) {
   return function (dispatch) {
     axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
@@ -1461,6 +1559,7 @@ export function initLoweringReplay(id, hideASNAP = false) {
       if(error.response.data.statusCode !== 404) {
         console.log(error);
       }
+      dispatch({ type: UPDATE_EVENTS, payload: [] })
       dispatch({ type: EVENT_FETCHING, payload: false})
     })
   }

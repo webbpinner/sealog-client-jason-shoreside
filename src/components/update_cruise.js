@@ -18,7 +18,6 @@ import * as actions from '../actions';
 
 const dateFormat = "YYYY-MM-DD"
 
-
 const CRUISE_ROUTE = "/files/cruises";
 
 const cookies = new Cookies();
@@ -49,21 +48,39 @@ class UpdateCruise extends Component {
   handleFormSubmit(formProps) {
     formProps.cruise_tags = (formProps.cruise_tags)? formProps.cruise_tags.map(tag => tag.trim()): [];
 
-    formProps.cruise_additional_meta = {}
-
     if(formProps.cruise_participants) {
       formProps.cruise_additional_meta.cruise_participants = formProps.cruise_participants.map(participant => participant.trim())
       delete formProps.cruise_participants
+    } else {
+      formProps.cruise_additional_meta.cruise_participants = []
     }
 
     if(formProps.cruise_name) {
       formProps.cruise_additional_meta.cruise_name = formProps.cruise_name
       delete formProps.cruise_name
+    } else {
+      formProps.cruise_additional_meta.cruise_name = ''
+    }
+
+    if(formProps.cruise_vessel) {
+      formProps.cruise_additional_meta.cruise_vessel = formProps.cruise_vessel
+      delete formProps.cruise_vessel
+    } else {
+      formProps.cruise_additional_meta.cruise_vessel = ''
     }
 
     if(formProps.cruise_description) {
       formProps.cruise_additional_meta.cruise_description = formProps.cruise_description
       delete formProps.cruise_description
+    } else {
+      formProps.cruise_additional_meta.cruise_description = ''
+    }
+
+    if(formProps.cruise_linkToR2R) {
+      formProps.cruise_additional_meta.cruise_linkToR2R = formProps.cruise_linkToR2R
+      delete formProps.cruise_linkToR2R
+    } else {
+      formProps.cruise_additional_meta.cruise_linkToR2R = ''
     }
 
     formProps.cruise_additional_meta.cruise_files = this.pond.getFiles().map(file => file.serverId)
@@ -79,7 +96,7 @@ class UpdateCruise extends Component {
       headers: {
         authorization: cookies.get('token')
       },
-      responseType: arraybuffer
+      responseType: 'arraybuffer'
     })
     .then((response) => {
       
@@ -103,6 +120,14 @@ class UpdateCruise extends Component {
     .catch((error)=>{
       console.log("JWT is invalid, logging out");
     });
+  }
+
+  renderHiddenField({ input }) {
+    return (
+      <FormGroup>
+        <FormControl {...input} type="hidden"/>
+      </FormGroup>
+    )
   }
 
   renderField({ input, label, placeholder, required, type, meta: { touched, error, warning } }) {
@@ -249,7 +274,7 @@ class UpdateCruise extends Component {
                 name="cruise_name"
                 type="text"
                 component={this.renderField}
-                label="Full Name"
+                label="Cruise Name"
                 placeholder="i.e. Lost City 2018"
                 required={true}
               />
@@ -258,15 +283,15 @@ class UpdateCruise extends Component {
                 component={this.renderTextArea}
                 type="textarea"
                 label="Cruise Description"
-                placeholder="A brief summary of the cruise"
+                placeholder="i.e. A brief summary of the cruise"
                 rows={10}
               />
               <Field
                 name="cruise_location"
                 type="text"
                 component={this.renderField}
-                label="Full Location"
-                placeholder="i.e. Lost City"
+                label="Cruise Location"
+                placeholder="i.e. Mid-Atlantic Ridge"
               />
               <Field
                 name="start_ts"
@@ -283,25 +308,41 @@ class UpdateCruise extends Component {
                 required={true}
               />
               <Field
+                name="cruise_vessel"
+                component={this.renderField}
+                type="text"
+                label="Vessel"
+                placeholder="i.e. R/V Atlantis"
+                required={true}
+              />
+              <Field
                 name="cruise_pi"
                 component={this.renderField}
                 type="text"
                 label="Primary Investigator"
                 placeholder="i.e. Dr. Susan Lang"
+                required={true}
               />
               <Field
                 name="cruise_participants"
                 component={this.renderTextArea}
                 type="textarea"
                 label="Cruise Participants, comma delimited"
-                placeholder="A comma-delimited list of names, i.e. Dave Butterfield,Sharon Walker"
+                placeholder="i.e. Dave Butterfield,Sharon Walker"
               />
               <Field
                 name="cruise_tags"
                 component={this.renderTextArea}
                 type="textarea"
                 label="Cruise Tags, comma delimited"
-                placeholder="A comma-delimited list of tags, i.e. coral,chemistry,engineering"
+                placeholder="i.e. coral,chemistry,engineering"
+              />
+              <Field
+                name="cruise_linkToR2R"
+                component={this.renderField}
+                type="text"
+                label="Link to Cruise in R2R"
+                placeholder="i.e https://doi.org/10.7284/908111"
               />
               <label>Cruise Files</label>
               {this.renderFiles()}
@@ -330,6 +371,10 @@ class UpdateCruise extends Component {
                 <Button bsStyle="default" type="button" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button bsStyle="primary" type="submit" disabled={submitting || !valid}>Update</Button>
               </div>
+              <Field
+                name="cruise_additional_meta"
+                component={this.renderHiddenField}
+              />
             </form>
           </Panel.Body>
         </Panel>
@@ -360,6 +405,10 @@ function validate(formProps) {
 
   if (!formProps.cruise_pi) {
     errors.cruise_pi = 'Required'
+  }
+
+  if (!formProps.cruise_vessel) {
+    errors.cruise_vessel = 'Required'
   }
 
   if ((formProps.start_ts != '') && (formProps.stop_ts != '')) {
@@ -397,6 +446,10 @@ function mapStateToProps(state) {
       initialValues.cruise_name = initialValues.cruise_additional_meta.cruise_name
     }
 
+    if (initialValues.cruise_additional_meta.cruise_vessel) {
+      initialValues.cruise_vessel = initialValues.cruise_additional_meta.cruise_vessel
+    }
+
     if (initialValues.cruise_additional_meta.cruise_description) {
       initialValues.cruise_description = initialValues.cruise_additional_meta.cruise_description
     }
@@ -405,7 +458,10 @@ function mapStateToProps(state) {
       initialValues.cruise_participants = initialValues.cruise_additional_meta.cruise_participants
     }
 
-    delete initialValues.cruise_additional_meta
+    if (initialValues.cruise_additional_meta.cruise_linkToR2R) {
+      initialValues.cruise_linkToR2R = initialValues.cruise_additional_meta.cruise_linkToR2R
+    }
+    // delete initialValues.cruise_additional_meta
   }
 
   return {

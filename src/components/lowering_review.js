@@ -10,6 +10,8 @@ import axios from 'axios';
 import EventFilterForm from './event_filter_form';
 import EventCommentModal from './event_comment_modal';
 import EventShowDetailsModal from './event_show_details_modal';
+import LoweringDropdown from './lowering_dropdown';
+import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as actions from '../actions';
 import { ROOT_PATH, API_ROOT_URL } from '../client_config';
 
@@ -20,23 +22,32 @@ const timeFormat = "HHmm"
 
 const maxEventsPerPage = 15
 
-class LoweringSearch extends Component {
+class LoweringReview extends Component {
 
   constructor (props) {
     super(props);
 
     this.state = {
-      hideASNAP: true,
+      hideASNAP: false,
       activePage: 1
     }
 
     this.handleEventUpdate = this.handleEventUpdate.bind(this);
     this.handlePageSelect = this.handlePageSelect.bind(this);
     this.updateEventFilter = this.updateEventFilter.bind(this)
+    this.handleLoweringSelect = this.handleLoweringSelect.bind(this)
+    this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this)
+
   }
 
-  componentWillMount(){
-    this.props.initLoweringReplay(this.props.match.params.id, this.state.hideASNAP);
+  componentDidMount() {
+    if(!this.props.lowering.id || this.props.lowering.id != this.props.match.params.id || this.props.event.events.length == 0) {
+      this.props.initLoweringReplay(this.props.match.params.id, this.state.hideASNAP);
+    }
+
+    if(!this.props.cruise.id || this.props.lowering.id != this.props.match.params.id){
+      this.props.initCruiseFromLowering(this.props.match.params.id);
+    }
   }
 
   componentDidUpdate() {
@@ -56,7 +67,8 @@ class LoweringSearch extends Component {
   }
 
   handleEventCommentModal(event) {
-    this.props.showModal('eventComment', { event: event, handleUpdateEvent: this.handleEventUpdate });
+    // this.props.showModal('eventComment', { event: event, handleUpdateEvent: this.handleEventUpdate });
+    this.props.showModal('eventComment', { event: event, handleUpdateEvent: this.props.updateEvent });
   }
 
   async handleEventUpdate(event_id, event_value, event_free_text, event_options, event_ts) {
@@ -67,7 +79,23 @@ class LoweringSearch extends Component {
   }
 
   handleEventShowDetailsModal(event) {
-    this.props.showModal('eventShowDetails', { event: event, handleUpdateEvent: this.props.updateEvent });
+    this.props.showModal('eventShowDetails', { event_id: event.id, handleUpdateEvent: this.props.updateEvent });
+  }
+
+  handleLoweringSelect(id) {
+    this.props.gotoLoweringReview(id)
+    this.props.initLoweringReplay(id, this.state.hideASNAP);
+    this.props.initCruiseFromLowering(id);
+  }
+
+  handleLoweringModeSelect(mode) {
+    if(mode === "Review") {
+      this.props.gotoLoweringReview(this.props.match.params.id)
+    } else if (mode === "Gallery") {
+      this.props.gotoLoweringGallery(this.props.match.params.id)
+    } else if (mode === "Replay") {
+      this.props.gotoLoweringReplay(this.props.match.params.id)
+    }
   }
 
   fetchEventAuxData() {
@@ -284,14 +312,16 @@ class LoweringSearch extends Component {
             eventOptionsArray.push(`free_text: \"${event.event_free_text}\"`)
           } 
 
-          let active = (this.props.event.selected_event.id == event.id)? true : false
+          // let active = (this.props.event.selected_event.id == event.id)? true : false
+          let active = false
 
           let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): ''
-          let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(i)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(i)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon icon='plus' fixedWidth inverse transform="shrink-4"/></span>
+          let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon icon='plus' fixedWidth inverse transform="shrink-4"/></span>
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>)
-
+          let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null
+          
           // eventArray.push(<ListGroupItem key={event.id}><Row><Col xs={11} onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</Col><Col>{deleteTooltip} {commentTooltip} {seatubeTooltip} {youtubeTooltip} </Col></Row></ListGroupItem>);
-          return (<ListGroupItem key={event.id} active={active} ><Row><Col xs={11} ><span onClick={() => this.handleEventShowDetailsModal(event)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span></Col><Col>{commentTooltip}</Col></Row></ListGroupItem>);
+          return (<ListGroupItem key={event.id} active={active} ><Row><Col xs={11} ><span onClick={() => this.handleEventShowDetailsModal(event)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span></Col><Col>{eventComment}</Col></Row></ListGroupItem>);
 
         }
       });
@@ -299,7 +329,7 @@ class LoweringSearch extends Component {
       return eventList
     }
 
-    return (<ListGroupItem>No events found</ListGroupItem>)
+    return (this.props.event.fetching)? (<ListGroupItem>Loading...</ListGroupItem>) : (<ListGroupItem>No events found</ListGroupItem>)
   }
 
   renderPagination() {
@@ -346,6 +376,7 @@ class LoweringSearch extends Component {
 
   render(){
 
+    let cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "loading..."
     let lowering_id = (this.props.lowering.lowering_id)? this.props.lowering.lowering_id : "loading..."
     return (
       <div>
@@ -353,22 +384,23 @@ class LoweringSearch extends Component {
         <EventShowDetailsModal />
         <Row>
           <Col lg={12}>
-            <div>
-              <Well bsSize="small">
-                {`Lowerings / ${lowering_id} / Review`}{' '}
-                <span className="pull-right">
-                  <LinkContainer to={ `/lowering_replay/${this.props.match.params.id}` }><Button disabled={this.props.event.fetching} bsSize={'xs'}>Goto Replay</Button></LinkContainer>
-                </span>
-              </Well>
+            <div style={{paddingBottom: "10px", paddingLeft: "10px"}}>
+              <LinkContainer to={ `/` }>
+                <span className="text-warning">{cruise_id}</span>
+              </LinkContainer>
+              {' '}/{' '}
+              <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+              {' '}/{' '}
+              <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Review"} modes={["Replay", "Gallery"]}/>
             </div>
           </Col>
         </Row>
         <Row>
-          <Col sm={7} md={8} lg={9}>
+          <Col sm={7} md={9} lg={9}>
             {this.renderEventPanel()}
             {this.renderPagination()}
           </Col>
-          <Col sm={5} md={4} lg={3}>
+          <Col sm={5} md={3} lg={3}>
             <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.state.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts}/>
           </Col>
         </Row>
@@ -381,8 +413,9 @@ function mapStateToProps(state) {
   return {
     roles: state.user.profile.roles,
     event: state.event,
+    cruise: state.cruise.cruise,
     lowering: state.lowering.lowering
   }
 }
 
-export default connect(mapStateToProps, null)(LoweringSearch);
+export default connect(mapStateToProps, null)(LoweringReview);

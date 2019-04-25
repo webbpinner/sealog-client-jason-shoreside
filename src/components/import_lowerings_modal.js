@@ -39,56 +39,105 @@ class ImportLoweringsModal extends Component {
 
   async insertLowering({id, lowering_id, start_ts, stop_ts, lowering_location = '', lowering_tags = [], lowering_hidden = false, lowering_access_list = [], lowering_additional_meta = {} }) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
-      {
-        headers: {
-          authorization: cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
-      if(result) {
+    if(id == null) {
+      try {
 
-        // console.log("User Already Exists");
+        const result = await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
+        {lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_access_list, lowering_additional_meta},
+        {
+          headers: {
+            authorization: cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        })
+        if(result) {
+          // console.log("User Imported");
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
+            }
+          ))
+        }
+      } catch(error) {
+        
+        if(error.response.data.statusCode == 400) {
+          // console.log("User Data malformed or incomplete");
+        } else {
+          console.log(error);  
+        }
+        
         this.setState( prevState => (
           {
-            skipped: prevState.skipped + 1,
+            errors: prevState.errors + 1,
             pending: prevState.pending - 1
           }
         ))
       }
-    } catch(error) {
+    }
+    else {
+      try {
+        const result = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+        {
+          headers: {
+            authorization: cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        })
+        if(result) {
 
-      if(error.response.data.statusCode == 404) {
-        // console.log("Attempting to add user")
-
-        try {
-
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
-          {id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_access_list, lowering_additional_meta},
-          {
-            headers: {
-              authorization: cookies.get('token'),
-              'content-type': 'application/json'
+          // console.log("User Already Exists");
+          this.setState( prevState => (
+            {
+              skipped: prevState.skipped + 1,
+              pending: prevState.pending - 1
             }
-          })
-          if(result) {
-            // console.log("User Imported");
+          ))
+        }
+      } catch(error) {
+
+        if(error.response.data.statusCode == 404) {
+          // console.log("Attempting to add user")
+
+          try {
+
+            const result = await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
+            {id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_access_list, lowering_additional_meta},
+            {
+              headers: {
+                authorization: cookies.get('token'),
+                'content-type': 'application/json'
+              }
+            })
+            if(result) {
+              // console.log("User Imported");
+              this.setState( prevState => (
+                {
+                  imported: prevState.imported + 1,
+                  pending: prevState.pending - 1
+                }
+              ))
+            }
+          } catch(error) {
+            
+            if(error.response.data.statusCode == 400) {
+              // console.log("User Data malformed or incomplete");
+            } else {
+              console.log(error);  
+            }
+            
             this.setState( prevState => (
               {
-                imported: prevState.imported + 1,
+                errors: prevState.errors + 1,
                 pending: prevState.pending - 1
               }
             ))
           }
-        } catch(error) {
-          
-          if(error.response.data.statusCode == 400) {
-            // console.log("User Data malformed or incomplete");
-          } else {
-            console.log(error);  
+        } else {
+
+          if(error.response.data.statusCode != 400) {
+            console.log(error.response);
           }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
@@ -96,17 +145,6 @@ class ImportLoweringsModal extends Component {
             }
           ))
         }
-      } else {
-
-        if(error.response.data.statusCode != 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
       }
     }
   }

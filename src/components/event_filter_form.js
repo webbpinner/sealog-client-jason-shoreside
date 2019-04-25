@@ -25,7 +25,7 @@ class EventFilterForm extends Component {
     // handleHide: PropTypes.func.isRequired
   };
 
-  componentWillMount() {
+  componentDidMount() {
   }
 
   componentWillUnmount() {
@@ -179,6 +179,7 @@ class EventFilterForm extends Component {
 }
 
 function validate(formProps) {
+
   const errors = {};
   return errors;
 

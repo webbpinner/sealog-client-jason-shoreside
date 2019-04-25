@@ -54,6 +54,8 @@ class UpdateLowering extends Component {
     if(formProps.lowering_description) {
       formProps.lowering_additional_meta.lowering_description = formProps.lowering_description
       delete formProps.lowering_description
+    } else {
+      formProps.lowering_additional_meta.lowering_description = ''
     }
 
     formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId)
@@ -69,7 +71,7 @@ class UpdateLowering extends Component {
       headers: {
         authorization: cookies.get('token')
       },
-      responseType: arraybuffer
+      responseType: 'arraybuffer'
     })
     .then((response) => {
       
@@ -93,6 +95,14 @@ class UpdateLowering extends Component {
     .catch((error)=>{
       console.log("JWT is invalid, logging out");
     });
+  }
+
+  renderHiddenField({ input }) {
+    return (
+      <FormGroup>
+        <FormControl {...input} type="hidden"/>
+      </FormGroup>
+    )
   }
 
   renderField({ input, label, placeholder, required, type, meta: { touched, error, warning } }) {
@@ -241,7 +251,7 @@ class UpdateLowering extends Component {
                 component={this.renderTextArea}
                 type="textarea"
                 label="Lowering Description"
-                placeholder="A brief description of the lowering"
+                placeholder="i.e. A brief description of the lowering"
                 rows={10}
               />
               <Field
@@ -299,6 +309,10 @@ class UpdateLowering extends Component {
                 <Button bsStyle="default" type="button" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button bsStyle="primary" type="submit" disabled={submitting || !valid}>Update</Button>
               </div>
+              <Field
+                name="lowering_additional_meta"
+                component={this.renderHiddenField}
+              />
             </form>
           </Panel.Body>
         </Panel>
@@ -360,7 +374,7 @@ function mapStateToProps(state) {
       initialValues.lowering_description = initialValues.lowering_additional_meta.lowering_description
     }
 
-    delete initialValues.lowering_additional_meta
+    // delete initialValues.lowering_additional_meta
   }
 
   return {

@@ -202,7 +202,7 @@ class Lowerings extends Component {
           if (i - l === 2) {
             rangeWithDots.push(<Pagination.Item key={l + 1} active={(this.state.activePage === l+1)} onClick={() => this.setState({activePage: (l + 1)})}>{l + 1}</Pagination.Item>)
           } else if (i - l !== 1) {
-            rangeWithDots.push(<Pagination.Ellipsis />);
+            rangeWithDots.push(<Pagination.Ellipsis key={`ellipsis_${i}`} />);
           }
         }
         rangeWithDots.push(<Pagination.Item key={i} active={(this.state.activePage === i)} onClick={() => this.setState({activePage: i})}>{i}</Pagination.Item>);

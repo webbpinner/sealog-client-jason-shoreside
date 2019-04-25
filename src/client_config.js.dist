@@ -25,7 +25,7 @@ export const LOGIN_SCREEN_TXT = "";
 export const LOGIN_IMAGE = "Jason_Profile.png";
 
 // Text show on the main page above the cruise list.
-export const MAIN_SCREEN_TXT = "Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting real-time scientific and/or operational observations.";
+export const MAIN_SCREEN_TXT = "Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting real-time scientific and/or operational observations. Please use the panels below to navigate to the year, cruise and lowering you wish to review.  If at any time you wish to return to this page please click the \"Sealog\" text in upper-left part of the window.";
 
 // Title displayed on the left side of the title bar
-export const HEADER_TITLE = "Sealog - JAOSN Shoreside";
+export const HEADER_TITLE = "Sealog - JASON Shoreside";

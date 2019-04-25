@@ -39,54 +39,108 @@ class ImportCruisesModal extends Component {
 
   async insertCruise({ id, cruise_id, start_ts, stop_ts, cruise_location = '', cruise_pi, cruise_tags = [], cruise_hidden = false, cruise_access_list = [], cruise_additional_meta = {} }) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
-      {
-        headers: {
-          authorization: cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
 
-      if(result) {
-        // console.log("Cruise Already Exists");
+    // the import file doesn't include an id
+    if(id == null) {
+      try {
+        const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
+        {cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_access_list, cruise_additional_meta},
+        {
+          headers: {
+            authorization: cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        })
+
+        if(result) {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
+            }
+          ))
+        }
+      } catch(error) {
+        
+        if(error.response.data.statusCode == 400) {
+          // console.log("Cruise Data malformed or incomplete");
+        } else {
+          console.log(error);  
+        }
+        
         this.setState( prevState => (
           {
-            skipped: prevState.skipped + 1,
+            errors: prevState.errors + 1,
             pending: prevState.pending - 1
           }
         ))
       }
-    } catch(error) {
-      if(error.response.data.statusCode == 404) {
-        // console.log("Attempting to add cruise")
 
-        try {
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
-          { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_access_list, cruise_additional_meta},
-          {
-            headers: {
-              authorization: cookies.get('token'),
-              'content-type': 'application/json'
+    }
+
+    // the import file includes an id
+    else {
+
+      try {
+        const result = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+        {
+          headers: {
+            authorization: cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        })
+
+        if(result) {
+          // console.log("Cruise Already Exists");
+          this.setState( prevState => (
+            {
+              skipped: prevState.skipped + 1,
+              pending: prevState.pending - 1
             }
-          })
+          ))
+        }
+      } catch(error) {
+        if(error.response.data.statusCode == 404) {
+          // console.log("Attempting to add cruise")
 
-          if(result) {
+          try {
+            const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
+            { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_access_list, cruise_additional_meta},
+            {
+              headers: {
+                authorization: cookies.get('token'),
+                'content-type': 'application/json'
+              }
+            })
+
+            if(result) {
+              this.setState( prevState => (
+                {
+                  imported: prevState.imported + 1,
+                  pending: prevState.pending - 1
+                }
+              ))
+            }
+          } catch(error) {
+            
+            if(error.response.data.statusCode == 400) {
+              // console.log("Cruise Data malformed or incomplete");
+            } else {
+              console.log(error);  
+            }
+            
             this.setState( prevState => (
               {
-                imported: prevState.imported + 1,
+                errors: prevState.errors + 1,
                 pending: prevState.pending - 1
               }
             ))
           }
-        } catch(error) {
-          
-          if(error.response.data.statusCode == 400) {
-            // console.log("Cruise Data malformed or incomplete");
-          } else {
-            console.log(error);  
+        } else {
+
+          if(error.response.data.statusCode != 400) {
+            console.log(error.response);
           }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
@@ -94,17 +148,6 @@ class ImportCruisesModal extends Component {
             }
           ))
         }
-      } else {
-
-        if(error.response.data.statusCode != 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
       }
     }
   }

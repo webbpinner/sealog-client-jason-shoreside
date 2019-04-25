@@ -90,6 +90,8 @@ render() {
                 {this.renderAlert()}
                 <div>
                   <Button bsStyle="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Login</Button>
+                  <br/>
+                  <Button bsStyle="success" onClick={() => this.props.switch2Guest(this.state.reCaptcha)} block disabled={!this.state.reCaptcha}>Continue as Guest</Button>
                 </div>
               </form>
               <br/>
@@ -112,8 +114,6 @@ render() {
     )
   }
 }
-              // <br/>
-              // <Button bsStyle="success" onClick={() => this.props.switch2Guest()} block>Login as Guest</Button>
 
 const validate = values => {
 

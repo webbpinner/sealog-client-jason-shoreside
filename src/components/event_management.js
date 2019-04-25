@@ -31,6 +31,7 @@ class EventManagement extends Component {
       activePage: 1,
       fetching: false,
       events: null,
+      eventCount: 0,
       eventFilter: {},
     }
 
@@ -40,7 +41,7 @@ class EventManagement extends Component {
     this.updateEventFilter = this.updateEventFilter.bind(this);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     if(!this.state.events){
       this.fetchEventsForDisplay()
     }
@@ -87,7 +88,7 @@ class EventManagement extends Component {
   }
 
   handleEventShowDetailsModal(event) {
-    this.props.showModal('eventShowDetails', { event: event, handleUpdateEvent: this.handleEventUpdate });
+    this.props.showModal('eventShowDetails', { event_id: event.id, handleUpdateEvent: this.handleEventUpdate });
   }
 
   async fetchEventsForDisplay(eventFilter = this.state.eventFilter) {
@@ -112,9 +113,6 @@ class EventManagement extends Component {
         this.setState({fetching: false})
         this.setState({events: response.data})
       }).catch((error)=>{
-        console.log(error)
-
-        console.log("?? 1")
         if(error.response.data.statusCode == 404){
           this.setState({fetching: false})
           this.setState({events: []})
@@ -322,11 +320,12 @@ class EventManagement extends Component {
           let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): ''
           let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon icon='plus' fixedWidth inverse transform="shrink-4"/></span>
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>)
+          let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null
 
           let deleteIcon = <FontAwesomeIcon className={"text-danger"} onClick={() => this.handleEventDeleteModal(event)} icon='trash' fixedWidth/>
           let deleteTooltip = (this.props.roles && this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={<Tooltip id={`deleteTooltip_${event.id}`}>Delete this event</Tooltip>}>{deleteIcon}</OverlayTrigger>): null
 
-          return (<ListGroupItem key={event.id}><Row><Col xs={11} onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</Col><Col>{deleteTooltip} {commentTooltip}</Col></Row></ListGroupItem>);
+          return (<ListGroupItem key={event.id}><Row><Col xs={11} onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</Col><Col>{deleteTooltip} {eventComment}</Col></Row></ListGroupItem>);
         }
       })
 
