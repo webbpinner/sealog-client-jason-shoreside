@@ -70,12 +70,13 @@ class LoweringReplay extends Component {
   componentDidMount() {
 
     if(!this.props.lowering.id || this.props.lowering.id != this.props.match.params.id || this.props.event.events.length == 0) {
+      console.log("initLoweringReplay", this.props.match.params.id)
       this.props.initLoweringReplay(this.props.match.params.id, this.state.hideASNAP);
     }
 
-    if(!this.props.cruise.id || this.props.lowering.id != this.props.match.params.id){
-      this.props.initCruiseFromLowering(this.props.match.params.id);
-    }
+    // if(!this.props.cruise.id || this.props.lowering.id != this.props.match.params.id){
+    this.props.initCruiseFromLowering(this.props.match.params.id);
+    // }
   }
 
   componentDidUpdate() {
