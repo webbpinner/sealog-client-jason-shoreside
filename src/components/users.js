@@ -299,7 +299,7 @@ class Users extends Component {
         )
     }
 
-    if (this.props.roles.includes("admin") || this.props.roles.includes("cruise_manager")) {
+    if (this.props.roles.includes("admin")) {
 
       let userForm = (this.props.userid)? <UpdateUser /> : <CreateUser />
 

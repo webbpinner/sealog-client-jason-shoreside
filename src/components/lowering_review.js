@@ -86,6 +86,8 @@ class LoweringReview extends Component {
     this.props.gotoLoweringReview(id)
     this.props.initLoweringReplay(id, this.state.hideASNAP);
     this.props.initCruiseFromLowering(id);
+    this.setState({activePage: 1})
+
   }
 
   handleLoweringModeSelect(mode) {

@@ -178,7 +178,7 @@ class AccessCruise extends Component {
 
     },[]) : []
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
+    if (this.props.roles && (this.props.roles.includes("admin"))) {
 
       return (
         <Panel className="form-standard">

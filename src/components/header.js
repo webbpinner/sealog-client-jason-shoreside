@@ -30,7 +30,7 @@ class Header extends Component {
   }
 
   renderUserOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if(this.props.roles.includes('admin')) {
       return (
         <LinkContainer to={ `/users` }>
           <NavItem>Users</NavItem>
@@ -59,18 +59,8 @@ class Header extends Component {
     }
   }
 
-  renderEventTemplateOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager')) {
-      return (
-        <LinkContainer to={ `/event_templates` }>
-          <NavItem>Event Templates</NavItem>
-        </LinkContainer>
-      );
-    }
-  }
-
   renderLoweringOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if(this.props.roles.includes('admin')) {
       return (
         <LinkContainer to={ `/lowerings` }>
           <NavItem>Lowerings</NavItem>
@@ -80,7 +70,7 @@ class Header extends Component {
   }
 
   renderCruiseOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if(this.props.roles.includes('admin')) {
       return (
         <LinkContainer to={ `/cruises` }>
           <NavItem>Cruises</NavItem>
@@ -99,16 +89,8 @@ class Header extends Component {
     }
   }
 
-  renderToggleASNAP() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) {
-      return (
-        <MenuItem onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</MenuItem>
-      );
-    }
-  }
-
   renderSystemManagerDropdown() {
-    if(this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager'))) {
+    if(this.props.roles && (this.props.roles.includes('admin'))) {
       return (
         <NavDropdown eventKey={3} title={'System Management'} id="basic-nav-dropdown">
           {this.renderCruiseOptions()}

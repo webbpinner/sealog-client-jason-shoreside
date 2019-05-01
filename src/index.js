@@ -16,9 +16,7 @@ import RequireUnauth from './components/auth/require_unauth';
 import CruiseMenu from './components/cruise_menu';
 import Users from './components/users';
 import Tasks from './components/tasks';
-import EventLogging from './components/event_logging';
 import EventManagement from './components/event_management';
-import EventTemplates from './components/event_templates';
 import Lowerings from './components/lowerings';
 import LoweringGallery from './components/lowering_gallery';
 import LoweringReplay from './components/lowering_replay';
@@ -87,7 +85,6 @@ ReactDOM.render(
             <Route path={ `/lowering_replay/:id` } exact={true} component={RequireAuth(LoweringReplay)} />
             <Route path={ `/lowering_review/:id` } exact={true} component={RequireAuth(LoweringReview)} />
             <Route path={ `/event_management` } exact={true} component={RequireAuth(EventManagement)} />
-            <Route path={ `/event_templates` } exact={true} component={RequireAuth(EventTemplates)} />
             <Footer />
           </div>
       </ConnectedRouter>

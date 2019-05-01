@@ -231,7 +231,7 @@ class UpdateLowering extends Component {
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
     const updateLoweringFormHeader = (<div>Update Lowering</div>);
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
+    if (this.props.roles && (this.props.roles.includes("admin"))) {
 
       return (
         <Panel className="form-standard">

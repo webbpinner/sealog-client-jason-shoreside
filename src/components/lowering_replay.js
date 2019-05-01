@@ -291,6 +291,7 @@ class LoweringReplay extends Component {
     this.props.gotoLoweringReplay(id)
     this.props.initLoweringReplay(id, this.state.hideASNAP);
     this.props.initCruiseFromLowering(id);
+    this.setState({replayEventIndex: 0, activePage: 1})
   }
 
   handleLoweringModeSelect(mode) {
