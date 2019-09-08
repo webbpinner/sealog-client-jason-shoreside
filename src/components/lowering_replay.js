@@ -245,7 +245,7 @@ class LoweringReplay extends Component {
   }
 
   sliderTooltipFormatter(v) {
-    if(this.props.event.events.length > v) {
+    if(this.props.event.events && this.props.event.events[v]) {
       let loweringStartTime = moment(this.props.lowering.start_ts)
       let loweringNow = moment(this.props.event.events[v].ts)
       let loweringElapse = loweringNow.diff(loweringStartTime)
@@ -257,7 +257,7 @@ class LoweringReplay extends Component {
 
   handleSliderChange(index) {
     this.handleLoweringReplayPause();
-    if(this.props.event.events[index]) {
+    if(this.props.event.events && this.props.event.events[index] ) {
       this.setState({replayEventIndex: index})
       this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
       this.setState({activePage: Math.ceil((index+1)/maxEventsPerPage)})
@@ -266,7 +266,7 @@ class LoweringReplay extends Component {
 
   handleEventClick(index) {
     this.handleLoweringReplayPause();
-    if(this.props.event.events[index]) {
+    if(this.props.event.events && this.props.event.events[index] ) {
       this.setState({replayEventIndex: index})
       this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
       this.setState({activePage: Math.ceil((index+1)/maxEventsPerPage)})
@@ -368,7 +368,7 @@ class LoweringReplay extends Component {
   }
 
   replayAdvance() {
-    if(this.state.replayEventIndex < (this.props.event.events.length - 1)) {
+    if(this.props.event.events[this.state.replayEventIndex]) {
       this.setState({replayEventIndex: this.state.replayEventIndex + 1})
       this.props.advanceLoweringReplayTo(this.props.event.events[this.state.replayEventIndex].id)
       this.setState({activePage: Math.ceil((this.state.replayEventIndex+1)/maxEventsPerPage)})
