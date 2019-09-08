@@ -245,7 +245,7 @@ class LoweringReplay extends Component {
   }
 
   sliderTooltipFormatter(v) {
-    if(this.props.event.events.length > 0) {
+    if(this.props.event.events && this.props.event.events.length > 0) {
       let loweringStartTime = moment(this.props.lowering.start_ts)
       let loweringNow = moment(this.props.event.events[v].ts)
       let loweringElapse = loweringNow.diff(loweringStartTime)
@@ -706,7 +706,7 @@ class LoweringReplay extends Component {
 
   renderControlsPanel() {
 
-    if(this.props.lowering) {
+    if(this.props.lowering && this.props.event.events) {
       let loweringStartTime = moment(this.props.lowering.start_ts)
       let loweringEndTime = moment(this.props.lowering.stop_ts)
 
