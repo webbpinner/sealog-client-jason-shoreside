@@ -386,12 +386,12 @@ class LoweringReplay extends Component {
   renderImageryPanel() {
     if(this.props.event && this.props.event.selected_event.aux_data) {
 
-      if (this.props.event.selected_event.event_value == "SuliusCam") {
+      if (this.props.event.selected_event.event_value == "SulisCam") {
         let tmpData =[]
 
         for (let i = 0; i < this.props.event.selected_event.event_options.length; i++) {
           if (this.props.event.selected_event.event_options[i].event_option_name == "filename") {
-            tmpData.push({source: "SuliusCam", filepath: API_ROOT_URL + IMAGE_PATH + '/' + this.props.lowering.lowering_id +  '/SuliusCam/' + this.props.event.selected_event.event_options[i].event_option_value} )
+            tmpData.push({source: "SulisCam", filepath: API_ROOT_URL + IMAGE_PATH + '/' + this.props.lowering.lowering_id +  '/SulisCam/' + this.props.event.selected_event.event_options[i].event_option_value} )
           } 
         }
 
@@ -452,11 +452,11 @@ class LoweringReplay extends Component {
       if(vehicleRealtimeNavData) {
         let xObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "latitude")
         realtime_latitude = (xObj)? `${xObj.data_value} ${xObj.data_uom}` : 'n/a'
-        delta_latitude = (xObj)? `${parseFloat(xObj.data_value)}` : 'n/a'
+        // delta_latitude = (xObj)? `${parseFloat(xObj.data_value)}` : delta_latitude
 
         let yObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "longitude")
         realtime_longitude = (yObj)? `${yObj.data_value} ${yObj.data_uom}` : 'n/a'
-        delta_longitude = (yObj)? `${parseFloat(yObj.data_value)}` : 'n/a'
+        // delta_longitude = (yObj)? `${parseFloat(yObj.data_value)}` : delta_longitude
       }
     }
 
@@ -465,17 +465,13 @@ class LoweringReplay extends Component {
       if(vehicleReNavData) {
         let xObj = vehicleReNavData.data_array.find(data => data.data_name == "latitude")
         renav_latitude = (xObj)? `${parseFloat(xObj.data_value).toFixed(6)} ${xObj.data_uom}` : 'n/a'
-        delta_latitude = (xObj)? `${(delta_latitude - parseFloat(xObj.data_value)).toFixed(6)} ddeg` : 'n/a'
+        delta_latitude = (xObj && realtime_latitude != 'n/a')? `${(parseFloat(realtime_latitude) - parseFloat(xObj.data_value)).toFixed(6)} ddeg` : 'n/a'
 
         let yObj = vehicleReNavData.data_array.find(data => data.data_name == "longitude")
         renav_longitude = (yObj)? `${parseFloat(yObj.data_value).toFixed(6)} ${yObj.data_uom}` : 'n/a'
-        delta_longitude = (yObj)? `${(delta_longitude - parseFloat(yObj.data_value)).toFixed(6)} ddeg` : 'n/a'
-      } else {
-        delta_latitude = 'n/a'
-        delta_longitude = 'n/a'
+        delta_longitude = (yObj && realtime_longitude != 'n/a')? `${(parseFloat(realtime_longitude) - parseFloat(yObj.data_value)).toFixed(6)} ddeg` : 'n/a'
       }
     }
-
 
     return (
       <Panel>

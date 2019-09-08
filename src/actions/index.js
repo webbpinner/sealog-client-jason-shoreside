@@ -374,12 +374,12 @@ export function forgotPassword({email, reCaptcha}) {
     axios.post(`${API_ROOT_URL}/api/v1/forgotPassword`, {email, reCaptcha})
     .then(response => {
 
-      console.log(response.data.message)
       dispatch(authSuccess(response.data.message));
 
     })
     .catch((error)=>{
       console.log(error)
+
       // If request is invalid
       dispatch(authError(error.response.data.message));
 
@@ -392,12 +392,7 @@ export function resetPassword({ token, password, reCaptcha}) {
     axios.patch(`${API_ROOT_URL}/api/v1/resetPassword`, { token, password, reCaptcha})
     .then((response) => {
 
-      //console.log("New user successfully created");
       dispatch(authSuccess('Password Reset'));
-      //dispatch(leaveRegisterForm());
-
-      // Redirect to login
-      //dispatch(push(`${ROOT_PATH}/login`));
     })
     .catch((error) => {
 
@@ -415,12 +410,7 @@ export function registerUser({username, fullname, password, email, reCaptcha}) {
     axios.post(`${API_ROOT_URL}/api/v1/register`, {username, fullname, password, email, reCaptcha})
     .then((response) => {
 
-      //console.log("New user successfully created");
       dispatch(registerUserSuccess('User created'));
-      //dispatch(leaveRegisterForm());
-
-      // Redirect to login
-      //dispatch(push(`${ROOT_PATH}/login`));
     })
     .catch((error) => {
 
@@ -465,7 +455,7 @@ export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = ''
         'content-type': 'application/json'
       }
     }).then((response) => {
-      //console.log("New user successfully created");
+
       dispatch(createCruiseSuccess('Cruise created'));
       dispatch(fetchCruises());
     }).catch((error) => {
